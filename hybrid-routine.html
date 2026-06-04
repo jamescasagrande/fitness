@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5-Day Hybrid Routine</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700;800&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --surface: #16181c;
+    --surface2: #1e2128;
+    --border: #2a2d35;
+    --accent: #e8ff47;
+    --accent2: #47c8ff;
+    --run-color: #ff7a47;
+    --lift-color: #47c8ff;
+    --text: #e8eaf0;
+    --muted: #7a7e8a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+  .container { max-width: 900px; margin: 0 auto; }
+  header {
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.5rem;
+  }
+  .label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+  h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(2.2rem, 6vw, 3.8rem);
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  h1 span { color: var(--accent); }
+  .subtitle { margin-top: 0.6rem; color: var(--muted); font-size: 0.9rem; }
+  .week-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+  .day-pill {
+    padding: 0.6rem 0.4rem;
+    border-radius: 6px;
+    text-align: center;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.15s ease;
+    background: var(--surface);
+  }
+  .day-pill:hover { background: var(--surface2); }
+  .day-pill.active { border-color: var(--accent); }
+  .day-pill.run-day .pill-type { color: var(--run-color); }
+  .day-pill.lift-day .pill-type { color: var(--lift-color); }
+  .day-pill.combo-day .pill-type { color: var(--accent); }
+  .pill-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .pill-type {
+    font-size: 0.63rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 0.2rem;
+    font-weight: 500;
+  }
+  .day-detail {
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 1.8rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border);
+  }
+  .day-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 1.4rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .day-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .day-badge {
+    font-size: 0.72rem;
+    padding: 0.25rem 0.7rem;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+  }
+  .run-badge { background: rgba(255,122,71,0.15); color: var(--run-color); }
+  .lift-badge { background: rgba(71,200,255,0.12); color: var(--lift-color); }
+  .combo-badge { background: rgba(232,255,71,0.1); color: var(--accent); }
+  .section-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.7rem;
+    margin-top: 1.2rem;
+  }
+  .section-label:first-of-type { margin-top: 0; }
+  .exercise-table { width: 100%; border-collapse: collapse; }
+  .exercise-table th {
+    text-align: left;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    padding: 0.4rem 0.6rem;
+    border-bottom: 1px solid var(--border);
+    font-weight: 500;
+  }
+  .exercise-table td {
+    padding: 0.65rem 0.6rem;
+    font-size: 0.88rem;
+    border-bottom: 1px solid rgba(42,45,53,0.5);
+    vertical-align: top;
+  }
+  .exercise-table tr:last-child td { border-bottom: none; }
+  .exercise-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .exercise-name { font-weight: 500; color: var(--text); }
+  .exercise-note { font-size: 0.75rem; color: var(--muted); margin-top: 0.15rem; line-height: 1.5; }
+  .exercise-priority {
+    font-size: 0.62rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    display: inline-block;
+    margin-top: 0.2rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .core-ex { background: rgba(71,200,255,0.1); color: var(--accent2); }
+  .acc-ex { background: rgba(120,120,120,0.15); color: var(--muted); }
+  .new-ex { background: rgba(232,255,71,0.1); color: var(--accent); }
+  .sets-reps {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--accent2);
+    white-space: nowrap;
+  }
+  .run-block {
+    background: rgba(255,122,71,0.06);
+    border: 1px solid rgba(255,122,71,0.2);
+    border-radius: 8px;
+    padding: 1.2rem 1.4rem;
+    margin-bottom: 1rem;
+  }
+  .run-stat { display: inline-block; margin-right: 2rem; margin-bottom: 0.4rem; }
+  .run-stat-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); display: block; }
+  .run-stat-val { font-family: 'Barlow Condensed', sans-serif; font-size: 1.3rem; font-weight: 700; color: var(--run-color); }
+  .run-desc { font-size: 0.85rem; color: var(--text); margin-top: 0.8rem; line-height: 1.6; }
+  .callout {
+    background: rgba(232,255,71,0.05);
+    border-left: 3px solid var(--accent);
+    padding: 0.8rem 1rem;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-bottom: 1.2rem;
+    line-height: 1.6;
+  }
+  .callout strong { color: var(--accent); }
+  .callout.red-flag {
+    border-left-color: #ff7a47;
+    background: rgba(255,122,71,0.05);
+  }
+  .callout.red-flag strong { color: var(--run-color); }
+  .decision-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 1.2rem;
+    font-size: 0.83rem;
+    line-height: 1.7;
+  }
+  .decision-box h4 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    margin-bottom: 0.6rem;
+  }
+  .decision-row { display: flex; gap: 0.6rem; margin-bottom: 0.3rem; align-items: baseline; }
+  .decision-if { color: var(--muted); min-width: 180px; font-size: 0.8rem; }
+  .decision-then { color: var(--text); font-size: 0.8rem; }
+  .notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.8rem;
+    margin-top: 2rem;
+  }
+  .note-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+  }
+  .note-card h4 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+  .note-card p { font-size: 0.8rem; color: var(--muted); line-height: 1.6; }
+  .hidden { display: none; }
+  @media (max-width: 600px) {
+    .week-grid { gap: 0.3rem; }
+    .pill-name { font-size: 0.85rem; }
+    .pill-type { font-size: 0.56rem; }
+    .day-detail { padding: 1.2rem; }
+    .exercise-table th, .exercise-table td { padding: 0.5rem 0.4rem; font-size: 0.82rem; }
+    .decision-if { min-width: 120px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <p class="label">Training Program — v3</p>
+    <h1>5-Day <span>Hybrid</span> Routine</h1>
+    <p class="subtitle">60 min cap · No leg press · No leg extension · L4-L5/L5-S1 aware · Distance running · Advanced</p>
+  </header>
+
+  <div class="week-grid">
+    <div class="day-pill lift-day active" onclick="showDay(0)">
+      <div class="pill-name">Mon</div>
+      <div class="pill-type">Lower A</div>
+    </div>
+    <div class="day-pill lift-day" onclick="showDay(1)">
+      <div class="pill-name">Tue</div>
+      <div class="pill-type">Upper A</div>
+    </div>
+    <div class="day-pill run-day" onclick="showDay(2)">
+      <div class="pill-name">Wed</div>
+      <div class="pill-type">Run</div>
+    </div>
+    <div class="day-pill lift-day" onclick="showDay(3)">
+      <div class="pill-name">Thu</div>
+      <div class="pill-type">Upper B</div>
+    </div>
+    <div class="day-pill combo-day" onclick="showDay(4)">
+      <div class="pill-name">Fri</div>
+      <div class="pill-type">Run + Lower B</div>
+    </div>
+  </div>
+
+  <!-- MON: Lower A -->
+  <div class="day-detail" id="day-0">
+    <div class="day-header">
+      <div class="day-title">Monday</div>
+      <span class="day-badge lift-badge">Lower Body A — Hinge, Single-Leg, Core</span>
+    </div>
+
+    <div class="callout red-flag"><strong>Disc note:</strong> No axial spinal loading. Hip-hinge and single-leg patterns only. If you feel any lumbar discomfort or nerve referral during RDLs, stop that exercise — don't push through it.</div>
+
+    <p class="section-label">Compounds — protect these</p>
+    <table class="exercise-table">
+      <tr><th>Exercise</th><th>Sets × Reps</th><th>Rest</th></tr>
+      <tr>
+        <td>
+          <div class="exercise-name">Romanian Deadlift (dumbbells)</div>
+          <div class="exercise-note">Hip hinge; soft knee; lumbar neutral throughout. Stop descent when you feel hamstring tension, not when the weight hits the floor.</div>
+          <span class="exercise-priority core-ex">Compound</span>
+        </td>
+        <td><span class="sets-reps">4 × 8–10</span></td>
+        <td>90 s</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="exercise-name">Bulgarian Split Squat (dumbbells)</div>
+          <div class="exercise-note">Rear foot elevated on bench. Lower slowly — 3 sec down. Drop weight before form breaks; lumbar rounding here is a disc risk.</div>
+          <span class="exercise-priority core-ex">Compound</span>
+        </td>
+        <td><span class="sets-reps">3 × 10 / leg</span></td>
+        <td>90 s</td>
+      </tr>
+    </table>
+
+    <p class="section-label">Accessories — cut here if short on time</p>
+    <table class="exercise-table">
+      <tr><th>Exercise</th><th>Sets × Reps</th><th>Rest</th></tr>
+      <tr>
+        <td>
+          <div class="exercise-name">Leg Curl (machine)</div>
+          <div class="exercise-note">Controlled eccentric; don't let hips rise off pad</div>
+          <span class="exercise-priority acc-ex">Accessory</span>
+        </td>
+        <td><span class="sets-reps">3 × 12</span></td>
+        <td>60 s</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="exercise-name">Cable Hip Abduction</div>
+          <div class="exercise-note">Ankle attachment, low cable. Stand sideways; sweep leg out. Slow and controlled — this is not a power movement. Addresses a runner-specific gap.</div>
+          <span class="exercise-priority new-ex">Added — Runner Priority</span>
+        </td>
+        <td><span class="sets-reps">3 × 15 / side</span></td>
+        <td>45 s</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="exercise-name">Standing Calf Raise (dumbbell)</div>
+          <span class="exercise-priority acc-ex">Accessory</span>
+        </td>
+        <td><span class="sets-reps">3 × 15–20</span></td>
+        <td>45 s</td>
+      </tr>
+    </table>
+
+    <p class="section-label">Core — do not skip; most important block for disc health</p>
+    <table class="exercise-table">
+      <tr><th>Exercise</th><th>Sets × Reps</th><th>Rest</th></tr>
+      <tr>
+        <td>
+          <div class="exercise-name">Dead Bug</div>
+          <div class="exercise-note">Lie on back, arms up, knees at 90°. Lower opposite arm and leg slowly while keeping lumbar pressed flat to floor. If your back arches, reduce range of motion. Best anterior core exercise for disc history — trains spine to resist extension under load.</div>
+          <span class="exercise-priority new-ex">Added — Disc Priority</span>
+        </td>
+        <td><span class="sets-reps">3 × 8 / side</span></td>
+        <td>45 s</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="exercise-name">Pallof Press (cable)</div>
+          <div class="exercise-note">Set cable at chest height. Stand sideways, press straight out and hold briefly. Resist rotation — that's the entire point. Trains anti-rotation which running demands constantly.</div>
+          <span class="exercise-priority new-ex">Added — Disc + Runner Priority</span>
+        </td>
+        <td><span class="sets-reps">3 × 10 / side</span></td>
+        <td>45 s</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- TUE: Upper A -->
+  <div class="day-detail hidden" id="day-1">
+    <div class="day-header">
+      <div class="day-title">Tuesday</div>
+      <span class="day-badge lift-badge">Upper Body A — Push / Pull / Shoulder Health</span>
+    </div>
+
+    <p class="section-label">Compounds — protect these</p>
+    <table class="exercise-table">
+      <tr><th>Exercise</th><th>Sets × Reps</th><th>Rest</th></tr>
+      <tr>
+        <td>
+          <div class="exercise-name">Chest Press Machine (adjustable)</div>
+          <div class="exercise-note">Heavier load here since dumbbells cap at 50 lb; control the eccentric</div>
+          <span class="exercise-priority core-ex">Compound</span>
+        </td>
+        <td><span class="sets-reps">4 × 8–10</span></td>
+        <td>90 s</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="exercise-name">Seated Cable Row (neutral grip)</div>
+          <div class="exercise-note">Replaces pulldown here to balance vertical vs. horizontal pull across the week. Pull to lower sternum; full scapular retraction at end.</div>
+          <span class="exercise-priority core-ex">Compound</span>
+          <span class="exercise-priority new-ex">Swapped from pulldown</span>
+        </td>
+        <td><span class="sets-reps">4 × 10</span></td>
+        <td>90 s</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="exercise-name">Seated DB Overhead Press</div>
+          <div class="exercise-note">Bench upright; neutral or pronated grip</div>
+          <span class="exercise-priority core-ex">Compound</span>
+        </td>
+        <td><span class="sets-reps">3 × 10</span></td>
+        <td>90 s</td>
+      </tr>
+    </table>
+
+    <p class="section-label">Accessories — cut here if short on time</p>
+    <table class="exercise-table">
+      <tr><th>Exercise</th><th>Sets × Reps</th><th>Rest</th></tr>
+      <tr>
+        <td>
+          <div class="exercise-name">Cable Face Pull (rope)</div>
+          <div class="exercise-note">External rotation emphasis; shoulder health work. Don't skip this one lightly — it earns its place given your pressing volume.</div>
+          <span class="exercise-priority acc-ex">Accessory</span>
+        </td>
+        <td><span class="sets-reps">3 × 15</span></td>
+        <td>60 s</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="exercise-name">Single-Arm DB Row</div>
+          <div class="exercise-note">Neutral grip; knee and hand on bench; pull toward hip not chest; don't rotate trunk excessively</div>
+          <span class="exercise-priority acc-ex">Accessory</span>
+        </td>
+        <td><span class="sets-reps">3 × 10–12 / side</span></td>
+        <td>60 s</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="exercise-name">Cable Pushdown + Hammer Curl (superset)</div>
+          <div class="exercise-note">Standing; neutral grip on curl; finish the session here</div>
+          <span class="exercise-priority acc-ex">Accessory</span>
+        </td>
+        <td><span class="sets-reps">3 × 12 each</span></td>
+        <td>60 s</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- WED: Run -->
+  <div class="day-detail hidden" id="day-2">
+    <div class="day-header">
+      <div class="day-title">Wednesday</div>
+      <span class="day-badge run-badge">Run — Easy Aerobic / Zone 2</span>
+    </div>
+
+    <div class="run-block">
+      <div>
+        <span class="run-stat"><span class="run-stat-label">Duration</span><span class="run-stat-val">30–45 min</span></span>
+        <span class="run-stat"><span class="run-stat-label">Effort</span><span class="run-stat-val">Zone 2</span></span>
+        <span class="run-stat"><span class="run-stat-label">HR</span><span class="run-stat-val">60–70% max</span></span>
+      </div>
+      <p class="run-desc">Conversational pace throughout. You should be able to speak in full sentences. This is mid-week aerobic maintenance — not a hard effort. Drifting into zone 3 reduces the aerobic adaptation value and adds fatigue you'll carry into Thursday's lifting.</p>
+    </div>
+
+    <p class="section-label">Post-run (5–10 min)</p>
+    <table class="exercise-table">
+      <tr><td style="font-size:0.85rem; color:var(--muted); line-height:1.7;">Walking cool-down. Hip flexor stretch, calf stretch, figure-4 or pigeon for glutes. No lifting today.</td></tr>
+    </table>
+  </div>
+
+  <!-- THU: Upper B -->
+  <div class="day-detail hidden" id="day-3">
+    <div class="day-header">
+      <div class="day-title">Thursday</div>
+      <span class="day-badge lift-badge">Upper Body B — Pull / Push / Core</span>
+    </div>
+
+    <p class="section-label">Compounds — protect these</p>
+    <table class="exercise-table">
+      <tr><th>Exercise</th><th>Sets × Reps</th><th>Rest</th></tr>
+      <tr>
+        <td>
+          <div class="exercise-name">Wide-Grip Pulldown</div>
+          <div class="exercise-note">Pronated grip, hands just outside shoulder width. Full stretch at top; drive elbows down and back. Kept here as the primary vertical pull.</div>
+          <span class="exercise-priority core-ex">Compound</span>
+        </td>
+        <td><span class="sets-reps">4 × 8–10</span></td>
+        <td>90 s</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="exercise-name">Incline DB Press</div>
+          <div class="exercise-note">Bench at 30–40°; brief pause at chest; different angle from Tuesday machine press</div>
+          <span class="exercise-priority core-ex">Compound</span>
+        </td>
+        <td><span class="sets-reps">4 × 10</span></td>
+        <td>90 s</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="exercise-name">Weighted Pull-Ups (or band-assisted)</div>
+          <div class="exercise-note">Pronated grip; add KB between feet if needed. If fatigue is high from pulldowns, treat this as a quality set — reduce load rather than grinding ugly reps.</div>
+          <span class="exercise-priority core-ex">Compound</span>
+        </td>
+        <td><span class="sets-reps">3 × 5–8</span></td>
+        <td>2 min</td>
+      </tr>
+    </table>
+
+    <p class="section-label">Accessories — cut here if short on time</p>
+    <table class="exercise-table">
+      <tr><th>Exercise</th><th>Sets × Reps</th><th>Rest</th></tr>
+      <tr>
+        <td>
+          <div class="exercise-name">Dips (bodyweight or assisted)</div>
+          <div class="exercise-note">Upright torso = more tricep; slight lean = more chest</div>
+          <span class="exercise-priority acc-ex">Accessory</span>
+        </td>
+        <td><span class="sets-reps">3 × 8–12</span></td>
+        <td>90 s</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="exercise-name">Rear Delt Fly (DB, bent over)</div>
+          <span class="exercise-priority acc-ex">Accessory</span>
+        </td>
+        <td><span class="sets-reps">3 × 15</span></td>
+        <td>60 s</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="exercise-name">Lateral Raise + Alternating Curl (superset)</div>
+          <span class="exercise-priority acc-ex">Accessory</span>
+        </td>
+        <td><span class="sets-reps">3 × 12 each</span></td>
+        <td>60 s</td>
+      </tr>
+    </table>
+
+    <p class="section-label">Core — 8 min; do not skip</p>
+    <table class="exercise-table">
+      <tr><th>Exercise</th><th>Sets × Reps</th><th>Rest</th></tr>
+      <tr>
+        <td>
+          <div class="exercise-name">Plank</div>
+          <div class="exercise-note">Forearms or hands. Neutral spine — don't let hips sag or pike. If 45 s is easy, add a reach or shoulder tap rather than just holding longer.</div>
+          <span class="exercise-priority new-ex">Added</span>
+        </td>
+        <td><span class="sets-reps">3 × 45 s</span></td>
+        <td>45 s</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="exercise-name">Cable Woodchop (high-to-low)</div>
+          <div class="exercise-note">Rotational core; stand sideways to cable, sweep diagonally. Complements Pallof press (anti-rotation on Mon) with controlled rotation here.</div>
+          <span class="exercise-priority new-ex">Added</span>
+        </td>
+        <td><span class="sets-reps">3 × 10 / side</span></td>
+        <td>45 s</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- FRI: Run + Lower B -->
+  <div class="day-detail hidden" id="day-4">
+    <div class="day-header">
+      <div class="day-title">Friday</div>
+      <span class="day-badge combo-badge">Run First → Lower Body B</span>
+    </div>
+
+    <div class="decision-box">
+      <h4>Friday Decision Rule — Check Before You Start</h4>
+      <div class="decision-row">
+        <span class="decision-if">Run took &lt; 35 min →</span>
+        <span class="decision-then">Do full Lower B as written</span>
+      </div>
+      <div class="decision-row">
+        <span class="decision-if">Run took 35–45 min →</span>
+        <span class="decision-then">Do hip thrust + back extension only; skip the rest</span>
+      </div>
+      <div class="decision-row">
+        <span class="decision-if">Legs felt dead on the run →</span>
+        <span class="decision-then">Skip lifting entirely; it's a running day</span>
+      </div>
+      <div class="decision-row">
+        <span class="decision-if">High mileage week →</span>
+        <span class="decision-then">Skip lifting entirely</span>
+      </div>
+    </div>
+
+    <div class="run-block">
+      <div>
+        <span class="run-stat"><span class="run-stat-label">Type</span><span class="run-stat-val">Long Run</span></span>
+        <span class="run-stat"><span class="run-stat-label">Duration</span><span class="run-stat-val">35–45 min</span></span>
+        <span class="run-stat"><span class="run-stat-label">Effort</span><span class="run-stat-val">Easy / Z2</span></span>
+      </div>
+      <p class="run-desc">Your weekly long(ish) run. Easy effort — time on feet, not speed. This is the priority of the day; lifting is secondary.</p>
+    </div>
+
+    <p class="section-label">Lower Body B — Glute &amp; Hip (post-run)</p>
+    <table class="exercise-table">
+      <tr><th>Exercise</th><th>Sets × Reps</th><th>Rest</th></tr>
+      <tr>
+        <td>
+          <div class="exercise-name">Hip Thrust (dumbbell or KB)</div>
+          <div class="exercise-note">Shoulders on bench; load across hips; full glute squeeze at top. Low spinal load — appropriate even post-run.</div>
+          <span class="exercise-priority core-ex">Compound</span>
+        </td>
+        <td><span class="sets-reps">3 × 12–15</span></td>
+        <td>60 s</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="exercise-name">Roman Chair Back Extension (KB hold)</div>
+          <div class="exercise-note">Hold KB at chest. Go lighter than usual — spinal erectors are already working from the run. Stop if lumbar feels fatigued.</div>
+          <span class="exercise-priority core-ex">Compound</span>
+        </td>
+        <td><span class="sets-reps">3 × 12</span></td>
+        <td>60 s</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="exercise-name">Single-Leg RDL (KB)</div>
+          <div class="exercise-note">Balance + posterior chain + hip stability. Only do this if time and energy permit after the above two.</div>
+          <span class="exercise-priority acc-ex">Accessory — time permitting</span>
+        </td>
+        <td><span class="sets-reps">2 × 10 / leg</span></td>
+        <td>60 s</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="notes-grid">
+    <div class="note-card">
+      <h4>Disc Herniation</h4>
+      <p>Leg press, barbell squats, and axial loading excluded. Hip thrusts, RDLs, split squats are lower-risk but not zero-risk. Back off immediately at any nerve referral or lumbar pain. These are general principles — not a substitute for PT clearance.</p>
+    </div>
+    <div class="note-card">
+      <h4>Core Is Not Optional</h4>
+      <p>Dead bug and Pallof press on Monday, plank and woodchop on Thursday. These are the most clinically relevant additions for your disc history and for running. Cut other accessories first.</p>
+    </div>
+    <div class="note-card">
+      <h4>Hip Abductors</h4>
+      <p>Cable hip abduction on Monday targets glute med — a common weakness in runners that contributes to IT band issues and knee valgus. Easy to skip, worth keeping.</p>
+    </div>
+    <div class="note-card">
+      <h4>Pull Balance</h4>
+      <p>Tue now uses cable row (horizontal pull) instead of pulldown. Thu has pulldown + pull-ups (both vertical). Week total: 2 vertical pulls, 2 horizontal pulls, plus single-arm rows. More balanced than v2.</p>
+    </div>
+    <div class="note-card">
+      <h4>50 lb Ceiling</h4>
+      <p>When you outgrow a dumbbell movement, slow the eccentric to 3–4 seconds before adding accessories. Cables can often fill the gap.</p>
+    </div>
+    <div class="note-card">
+      <h4>Weekend</h4>
+      <p>Sat/Sun off. Optional easy walk, mobility, or foam rolling. A short easy run on one weekend day is fine if you want more mileage — keep it zone 2.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showDay(index) {
+    for (let i = 0; i < 5; i++) {
+      document.getElementById('day-' + i).classList.add('hidden');
+      document.querySelectorAll('.day-pill')[i].classList.remove('active');
+    }
+    document.getElementById('day-' + index).classList.remove('hidden');
+    document.querySelectorAll('.day-pill')[index].classList.add('active');
+  }
+</script>
+</body>
+</html>
